@@ -1,17 +1,10 @@
 import os
-from langchain_openai import ChatOpenAI
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 
 from state import State
 
-OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
-
-llm = ChatOpenAI(
-    openai_api_key=OPENAI_API_KEY,
-    temperature=0,
-    model='gpt-4o-mini'
-)
+from config import llm
 
 system_message = """You are a customer support representative for **Fantix LLC**, 
 a company specializing in innovative and customer-focused solutions. 

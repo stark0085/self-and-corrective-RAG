@@ -1,8 +1,7 @@
 import os
 from pydantic import BaseModel, Field
-from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
-
+from config import llm
 from state import State
 
 class QueryEvaluator(BaseModel):
@@ -27,17 +26,15 @@ Classify each query into one of the following categories:
 Your goal is to classify the query accurately and concisely.
 """
 
-llm = ChatOpenAI(
-    temperature=0,
-    model='gpt-4o-mini'
-).with_structured_output(QueryEvaluator)
+# Use the centralized llm with structured output
+structured_llm = llm.with_structured_output(QueryEvaluator)
 
 prompt = ChatPromptTemplate.from_messages([
     ('system', system_prompt),
-    ('user', 'User Question: \\n\\n {question}')
+    ('user', 'User Question: \n\n {question}')
 ])
 
-chain = prompt | llm
+chain = prompt | structured_llm
 
 def analyze_query(state: State):
     """

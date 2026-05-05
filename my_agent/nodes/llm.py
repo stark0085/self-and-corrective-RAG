@@ -1,13 +1,7 @@
-from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
-
 from state import State
-
-llm = ChatOpenAI(
-    model='gpt-4o-mini',
-    temperature=0.2,
-)
+from config import llm
 
 system_prompt = """You are an AI customer support representative for 'Fantix LLC'. 
 Respond to user queries as follows:  

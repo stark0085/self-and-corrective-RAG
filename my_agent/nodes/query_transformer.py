@@ -1,18 +1,8 @@
 import os
-from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
-
+from config import llm
 from state import State
-
-OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
-
-
-llm = ChatOpenAI(
-    model="gpt-4o-mini",
-    temperature=0,
-    api_key=OPENAI_API_KEY,
-)
 
 system_prompt = """Transform the user’s question into a concise, clear, and search-engine-friendly query that focuses\
 on retrieving relevant and accurate information. Ensure the phrasing avoids ambiguity and includes keywords\
@@ -30,9 +20,9 @@ def transform_query(state: State):
     Transform a user's question into a search-engine-friendly query
 
     Args:
-        query (str): User's question
+        state (State): Current state of the conversation
     Returns:
-        str: Search-engine-friendly query
+        dict: State with updated question
     """
 
     question = state['question']
