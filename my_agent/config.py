@@ -5,7 +5,6 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# OpenRouter LLM Configuration
 llm = ChatOpenAI(
     model="openai/gpt-4o-mini",
     openai_api_key=os.getenv("OPENROUTER_API_KEY"),
@@ -13,5 +12,4 @@ llm = ChatOpenAI(
     temperature=0
 )
 
-# HuggingFace Embeddings Configuration
 embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")

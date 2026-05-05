@@ -1,5 +1,4 @@
 from langgraph.graph import StateGraph, START, END
-
 from state import State
 from nodes.retriever import retriever
 from nodes.generator import generator
@@ -20,7 +19,6 @@ from nodes.confidence_scorer import calculate_confidence
 
 graph_builder = StateGraph(State)
 
-# Nodes
 graph_builder.add_node('query_analyzer', analyze_query)
 graph_builder.add_node('chatbot', customer_support)
 graph_builder.add_node('retriever', retriever)
@@ -33,7 +31,6 @@ graph_builder.add_node('completeness_evaluator', evaluate_completeness)
 graph_builder.add_node('confidence_scorer', calculate_confidence)
 graph_builder.add_node('revise_query', increment_retry_count)
 
-# Edges
 graph_builder.add_edge(START, 'query_analyzer')
 
 graph_builder.add_conditional_edges(
@@ -46,7 +43,6 @@ graph_builder.add_conditional_edges(
 )
 
 graph_builder.add_edge('chatbot', END)
-
 graph_builder.add_edge('retriever', 'evaluator')
 
 graph_builder.add_conditional_edges(
@@ -60,8 +56,6 @@ graph_builder.add_conditional_edges(
 
 graph_builder.add_edge('query_transformer', 'search_web')
 graph_builder.add_edge('search_web', 'generator')
-
-# Post-generation evaluation flow
 graph_builder.add_edge('generator', 'grounding_evaluator')
 graph_builder.add_edge('grounding_evaluator', 'completeness_evaluator')
 
@@ -74,10 +68,7 @@ graph_builder.add_conditional_edges(
     }
 )
 
-# Retry logic: go back to query transformation for a better search/generation
 graph_builder.add_edge('revise_query', 'query_transformer')
-
-# Final score and end
 graph_builder.add_edge('confidence_scorer', END)
 
 graph = graph_builder.compile()

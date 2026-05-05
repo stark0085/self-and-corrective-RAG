@@ -1,9 +1,7 @@
 import os
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
-
 from state import State
-
 from config import llm
 
 system_message = """You are a customer support representative for **Fantix LLC**, 
@@ -22,26 +20,15 @@ Question: {question}
 Context: {context}
 """
 
-
 prompt = ChatPromptTemplate.from_template(system_message)
-
 rag_chain = prompt | llm | StrOutputParser()
 
 def generator(state: State):
-    """
-    Retrieve answer based on the user's question and relevant documents
-
-    Args:
-        state (State): Current state of the conversation
-    Returns:
-        dict: State with updated question, answer, and documents
-    """
-
+    """Generate an answer using the retrieved context."""
     question = state['question']
     documents = state['documents']
 
-    documents = '\\n\\n'.join(doc.page_content for doc in documents)
-
-    response = rag_chain.invoke({'question': question, 'context': documents})
+    context = '\n\n'.join(doc.page_content for doc in documents)
+    response = rag_chain.invoke({'question': question, 'context': context})
 
     return {"question": question, "answer": response, "documents": documents}

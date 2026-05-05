@@ -5,21 +5,16 @@ from config import llm
 from state import State
 
 class RetrievalEvaluator(BaseModel):
-    """
-    A class to evaluate the relevance of documents retrieved from the vector store.
-    """
-    score: float = Field(description="Relevance score between 0 and 1, where 1 is highly relevant and 0 is not relevant.")
+    score: float = Field(description="Relevance score between 0 and 1")
 
-# Use the centralized llm with structured output
 structured_llm = llm.with_structured_output(RetrievalEvaluator)
 
 system_prompt = """Evaluate the document to determine its relevance to the user's question. 
 Assign a score between 0 and 1. 
-- 1.0: The document directly and fully answers the question or provides essential information.
-- 0.5: The document is somewhat related but doesn't fully answer the question.
-- 0.0: The document is completely irrelevant.
-Only respond with the score.
-"""
+- 1.0: Directly and fully answers.
+- 0.5: Somewhat related.
+- 0.0: Completely irrelevant.
+Only respond with the score."""
 
 prompt = ChatPromptTemplate.from_messages([
     ('system', system_prompt),
@@ -29,15 +24,7 @@ prompt = ChatPromptTemplate.from_messages([
 chain = prompt | structured_llm
 
 def document_evaluator(state: State):
-    """
-    Evaluate the relevance of the retrieved documents
-
-    Args:
-        state (State): Current state of the conversation
-    Returns:
-        dict: State with updated documents, web_search flag, and relevance_score
-    """
-
+    """Evaluates retrieved document relevance."""
     question = state['question']
     documents = state['documents']
 
@@ -51,12 +38,10 @@ def document_evaluator(state: State):
     for document in documents:
         response = chain.invoke({"question": question, "document": document.page_content})
         total_score += response.score
-
         if response.score >= 0.5:
             filtered_docs.append(document)
 
     relevance_score = total_score / len(documents)
-
     if relevance_score <= 0.5:
         web_search = 'yes'
         

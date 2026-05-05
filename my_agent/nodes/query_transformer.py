@@ -16,18 +16,8 @@ prompt = ChatPromptTemplate.from_messages([
 chain = prompt | llm | StrOutputParser()
 
 def transform_query(state: State):
-    """
-    Transform a user's question into a search-engine-friendly query
-
-    Args:
-        state (State): Current state of the conversation
-    Returns:
-        dict: State with updated question
-    """
-
     question = state['question']
     documents = state['documents']
-
     response = chain.invoke({"question": question})
     
     return {"question": response, "documents": documents}

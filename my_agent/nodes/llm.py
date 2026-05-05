@@ -10,8 +10,7 @@ Respond to user queries as follows:
 2. If the query is **irrelevant**, politely inform the user that your assistance is limited to Fantix LLC-related topics.  
 3. If the query is **relevant** to Fantix LLC, provide an accurate and concise response based on the given context.  
 
-Ensure all responses are clear, professional, and concise.
-"""
+Ensure all responses are clear, professional, and concise."""
 
 prompt = ChatPromptTemplate.from_messages([
     ('system', system_prompt),
@@ -21,16 +20,7 @@ prompt = ChatPromptTemplate.from_messages([
 chain = prompt | llm | StrOutputParser()
 
 def customer_support(state: State):
-    """
-    Provide customer support based on the user's question
-
-    Args:
-        state (State): Current state of the conversation
-    Returns:
-        str: Response to the user's question
-    """
-
+    """Handles general customer support queries."""
     question = state['question']
     response = chain.invoke({'question': question})
-
     return {'answer': response}
